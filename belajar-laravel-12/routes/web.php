@@ -51,3 +51,9 @@ Route::middleware(['auth'])->group(function () {
     // Route for sending telegram message
     Route::post('/users/{id}/send-telegram', [UserController::class, 'sendTelegram'])->name('users.send-telegram');
 });
+Route::get('/print-job/{message}', function ($message)  {
+
+    
+    \App\Jobs\PrintToConsoleJob::dispatch($message);
+    return 'Job untuk mencetak pesan ke konsol telah di-dispatch dengan pesan: ' . $message;
+})->name('print.job');
