@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,14 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum'); // Gunakan sanctum untuk API auth
-
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::apiResource('users', UserController::class); // API Resource routes untuk user management
+// Auth routes dengan rate limiting
+Route::middleware('throttle:6,1')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::get('/user', function () {
-    return request()->user(); // Contoh route untuk mendapatkan user yang sedang login (untuk testing)
-})->middleware('auth:sanctum');
+// Protected routes dengan rate limiting
+Route::middleware(['auth:sanctum', 'throttle:10,1'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::apiResource('users', UserController::class); // API Resource routes untuk user management
+});

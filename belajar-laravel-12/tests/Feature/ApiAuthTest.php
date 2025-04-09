@@ -105,4 +105,60 @@ class ApiAuthTest extends TestCase
         $response->assertStatus(200)
             ->assertJson(['id' => $user->id, 'name' => $user->name, 'email' => $user->email]);
     }
+
+    public function test_login_rate_limiting()
+    {
+        $loginData = [
+            'email' => 'test@example.com',
+            'password' => 'password123',
+        ];
+
+        // Mencoba login 7 kali (melebihi batas 6 kali per menit)
+        for ($i = 0; $i < 6; $i++) {
+            $response = $this->postJson('/api/login', $loginData);
+            $response->assertStatus(401); // Invalid credentials
+        }
+
+        // Percobaan ke-7 seharusnya terkena rate limit
+        $response = $this->postJson('/api/login', $loginData);
+        $response->assertStatus(429); // Too Many Attempts
+    }
+
+    public function test_register_rate_limiting()
+    {
+        $userData = [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ];
+
+        // Mencoba register 7 kali (melebihi batas 6 kali per menit)
+        for ($i = 0; $i < 6; $i++) {
+            $userData['email'] = "test{$i}@example.com"; // Email berbeda untuk setiap percobaan
+            $response = $this->postJson('/api/register', $userData);
+            $response->assertStatus(201); // Created
+        }
+
+        // Percobaan ke-7 seharusnya terkena rate limit
+        $userData['email'] = 'test7@example.com';
+        $response = $this->postJson('/api/register', $userData);
+        $response->assertStatus(429); // Too Many Attempts
+    }
+
+    public function test_logout_rate_limiting()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        // Mencoba logout 11 kali (melebihi batas 10 kali per menit)
+        for ($i = 0; $i < 10; $i++) {
+            $response = $this->postJson('/api/logout');
+            $response->assertStatus(200); // Successful logout
+        }
+
+        // Percobaan ke-11 seharusnya terkena rate limit
+        $response = $this->postJson('/api/logout');
+        $response->assertStatus(429); // Too Many Attempts
+    }
 }

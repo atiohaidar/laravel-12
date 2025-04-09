@@ -20,11 +20,18 @@ Route::get('/', function () {
 });
 
 // Routes Autentikasi
+Route::middleware('throttle:6,1')->group(function () {
+    Route::post('/register', [AuthController::class, 'registerPost'])->name('register.post');
+    Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
+});
+
+Route::middleware('throttle:10,1')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+});
+
+// Routes tanpa rate limiting
 Route::get('/register', [AuthController::class, 'register'])->name('register');
-Route::post('/register', [AuthController::class, 'registerPost'])->name('register.post');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Routes User Management & API (Perlu Middleware Auth)
 Route::middleware(['auth'])->group(function () {
