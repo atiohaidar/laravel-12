@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      *
@@ -103,4 +104,5 @@ class UserController extends Controller
         $user->delete();
         return response()->json(['message' => 'User berhasil dihapus'], 200);
     }
+    
 }

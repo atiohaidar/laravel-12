@@ -28,6 +28,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Routes User Management & API (Perlu Middleware Auth)
 Route::middleware(['auth'])->group(function () {
+    Route::get('/users/profile', [UserController::class, 'profile'])->name('users.profile'); // ini harus sebelum resource, biar kebaca
     Route::resource('users', UserController::class); // CRUD lengkap untuk user
     
     // Dashboard routes
@@ -38,7 +39,6 @@ Route::middleware(['auth'])->group(function () {
         return view('api.documentation');
     })->name('api.docs');
     
-    Route::get('/users/profile', [UserController::class, 'profile'])->name('users.profile');
     
     // Token management
     Route::get('/tokens', [UserController::class, 'tokens'])->name('tokens.index');

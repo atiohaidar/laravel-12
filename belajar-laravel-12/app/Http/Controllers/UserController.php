@@ -185,4 +185,6 @@ class UserController extends Controller
         auth()->user()->tokens()->where('id', $id)->delete();
         return redirect()->route('tokens.index')->with('success', 'Token berhasil dihapus.');
     }
+    
+    
 }
