@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\KirimEmail;
 
 class UserController extends Controller
 {
@@ -185,6 +187,35 @@ class UserController extends Controller
         auth()->user()->tokens()->where('id', $id)->delete();
         return redirect()->route('tokens.index')->with('success', 'Token berhasil dihapus.');
     }
-    
-    
+
+    /**
+     * Send email to the specified user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function sendEmail(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        $validator = Validator::make($request->all(), [
+            'message' => 'required|string|min:10',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            Mail::to($user)->send(new KirimEmail($request->message, $user));
+            return redirect()->back()->with('success', 'Email berhasil dikirim.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal mengirim email: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
 }

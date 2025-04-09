@@ -4,6 +4,13 @@
 
 @section('content')
 <div class="container">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="d-flex align-items-center">
@@ -122,6 +129,28 @@
                             <p class="text-secondary mb-0">No API tokens found for this user.</p>
                         </div>
                     @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">Send Email</div>
+                <div class="card-body">
+                    <form action="{{ url('/users/' . $user->id . '/send-email') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message Content</label>
+                            <textarea class="form-control @error('message') is-invalid @enderror" 
+                                id="message" name="message" rows="4" required></textarea>
+                            @error('message')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Email</button>
+                    </form>
                 </div>
             </div>
         </div>

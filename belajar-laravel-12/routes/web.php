@@ -44,4 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tokens', [UserController::class, 'tokens'])->name('tokens.index');
     Route::post('/tokens', [UserController::class, 'createToken'])->name('tokens.create');
     Route::delete('/tokens/{token}', [UserController::class, 'destroyToken'])->name('tokens.destroy');
+    
+    // Route for sending email
+    Route::post('/users/{id}/send-email', [UserController::class, 'sendEmail'])->name('users.send-email');
 });
