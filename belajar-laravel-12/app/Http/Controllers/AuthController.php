@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\LoginNotif;
 
 class AuthController extends Controller
 {
@@ -56,7 +57,12 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/users'); // Redirect ke halaman user atau dashboard
+            
+            // Send login notification
+            $user = Auth::user();
+            $user->notify(new LoginNotif());
+            
+            return redirect()->intended('/users');
         }
 
         return back()->withErrors([
