@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\KirimEmail;
 use App\Services\TelegramService;
+use Illuminate\Support\Facades\Event;
 
 class UserController extends Controller
 {
@@ -117,6 +118,8 @@ class UserController extends Controller
         }
 
         $user->update($userData);
+
+        Event::dispatch(new \App\Events\UserUpdated($user));
 
         return redirect()->route('users.index')->with('success', 'User berhasil diupdate.');
     }
