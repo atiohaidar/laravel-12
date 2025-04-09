@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,6 +18,9 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
+        Storage::disk('local')->put('users.json', json_encode($users));
+        Storage::disk('public')->put('users_global.json', json_encode($users));
+        echo "Data users telah disimpan ke dalam file JSON.\n " . Storage::disk('public')->url('users_global.json');
         return view('users.index', compact('users'));
     }
 
