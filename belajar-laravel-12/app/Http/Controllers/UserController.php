@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
@@ -16,7 +17,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = Cache::remember('users.all', 3600, function () {
+            return User::all();
+        });
         return view('users.index', compact('users'));
     }
 
@@ -65,7 +68,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $user = Cache::remember('user.' . $id, 3600, function () use ($id) {
+            return User::findOrFail($id);
+        });
         return view('users.show', compact('user'));
     }
 
@@ -74,9 +79,12 @@ class UserController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
-     */    public function edit($id)
+     */    
+    public function edit($id)
     {
-        $user = User::findOrFail($id);
+        $user = Cache::remember('user.' . $id, 3600, function () use ($id) {
+            return User::findOrFail($id);
+        });
         return view('users.edit', compact('user'));
     }
 
@@ -113,6 +121,10 @@ class UserController extends Controller
 
         $user->update($userData);
 
+        // Clear related caches after update
+        Cache::forget('user.' . $id);
+        Cache::forget('users.all');
+
         return redirect()->route('users.index')->with('success', 'User berhasil diupdate.');
     }
 
@@ -127,6 +139,10 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
+        // Clear related caches after deletion
+        Cache::forget('user.' . $id);
+        Cache::forget('users.all');
+
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
     }
 
@@ -137,7 +153,10 @@ class UserController extends Controller
      */
     public function profile()
     {
-        return view('users.profile', ['user' => auth()->user()]);
+        $user = Cache::remember('user.profile.' . auth()->id(), 3600, function () {
+            return auth()->user();
+        });
+        return view('users.profile', ['user' => $user]);
     }
 
     /**
@@ -147,7 +166,9 @@ class UserController extends Controller
      */
     public function tokens()
     {
-        $tokens = auth()->user()->tokens;
+        $tokens = Cache::remember('user.tokens.' . auth()->id(), 300, function () {
+            return auth()->user()->tokens;
+        });
         return view('tokens.index', compact('tokens'));
     }
 
@@ -169,6 +190,9 @@ class UserController extends Controller
 
         $token = auth()->user()->createToken($request->name);
 
+        // Clear tokens cache after creating new token
+        Cache::forget('user.tokens.' . auth()->id());
+
         return redirect()->route('tokens.index')
             ->with('success', 'Token berhasil dibuat.')
             ->with('plain_text_token', $token->plainTextToken);
@@ -183,8 +207,10 @@ class UserController extends Controller
     public function destroyToken($id)
     {
         auth()->user()->tokens()->where('id', $id)->delete();
+        
+        // Clear tokens cache after deleting token
+        Cache::forget('user.tokens.' . auth()->id());
+        
         return redirect()->route('tokens.index')->with('success', 'Token berhasil dihapus.');
     }
-    
-    
 }
