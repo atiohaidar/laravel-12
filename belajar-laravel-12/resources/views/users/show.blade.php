@@ -147,14 +147,14 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header">Send Email</div>
                 <div class="card-body">
                     <form action="{{ url('/users/' . $user->id . '/send-email') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label for="message" class="form-label">Message Content</label>
+                            <label for="message" class="form-label">Email Message</label>
                             <textarea class="form-control @error('message') is-invalid @enderror" 
                                 id="message" name="message" rows="4" required></textarea>
                             @error('message')
@@ -163,6 +163,33 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Send Email</button>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">Send Telegram Message</div>
+                <div class="card-body">
+                    @if($user->telegram_id)
+                        <form action="{{ url('/users/' . $user->id . '/send-telegram') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="telegram_message" class="form-label">Telegram Message</label>
+                                <textarea class="form-control @error('message') is-invalid @enderror" 
+                                    id="telegram_message" name="message" rows="4" required></textarea>
+                                @error('message')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send Telegram</button>
+                        </form>
+                    @else
+                        <div class="alert alert-info mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            This user hasn't set up their Telegram ID yet.
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

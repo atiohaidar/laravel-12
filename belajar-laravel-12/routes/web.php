@@ -47,4 +47,7 @@ Route::middleware(['auth'])->group(function () {
     
     // Route for sending email
     Route::post('/users/{id}/send-email', [UserController::class, 'sendEmail'])->name('users.send-email');
+    
+    // Route for sending telegram message
+    Route::post('/users/{id}/send-telegram', [UserController::class, 'sendTelegram'])->name('users.send-telegram');
 });

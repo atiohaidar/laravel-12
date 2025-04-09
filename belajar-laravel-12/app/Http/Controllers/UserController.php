@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\KirimEmail;
+use App\Services\TelegramService;
 
 class UserController extends Controller
 {
@@ -217,6 +218,39 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Gagal mengirim email: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Send telegram message to the specified user.
+     */
+    public function sendTelegram(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        if (!$user->telegram_id) {
+            return redirect()->back()
+                ->with('error', 'User does not have a Telegram ID configured.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'message' => 'required|string|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            $telegram = new TelegramService();
+            $telegram->sendMessage($user->telegram_id, $request->message);
+            return redirect()->back()->with('success', 'Telegram message sent successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to send Telegram message: ' . $e->getMessage())
                 ->withInput();
         }
     }
