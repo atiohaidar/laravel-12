@@ -9,9 +9,19 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\Telegram\TelegramMessage;
 use Carbon\Carbon;
 
-class LoginNotif extends Notification
+class LoginNotif extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    /**
+     * The number of times the job may be attempted.
+     */
+    public $tries = 3;
+
+    /**
+     * The number of seconds to wait before retrying the job.
+     */
+    public $backoff = [10, 60, 180];
 
     protected $loginTime;
 

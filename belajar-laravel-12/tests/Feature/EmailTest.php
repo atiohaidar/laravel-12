@@ -27,7 +27,7 @@ class EmailTest extends TestCase
         $response->assertSessionHas('success');
         $response->assertRedirect();
 
-        Mail::assertSent(KirimEmail::class, function ($mail) use ($recipient) {
+        Mail::assertQueued(KirimEmail::class, function ($mail) use ($recipient) {
             return $mail->hasTo($recipient->email) &&
                    $mail->messageContent === 'This is a test email message content.' &&
                    $mail->user->id === $recipient->id;
@@ -96,7 +96,7 @@ class EmailTest extends TestCase
                 'message' => $message
             ]);
 
-        Mail::assertSent(KirimEmail::class, function ($mail) use ($recipient, $message) {
+        Mail::assertQueued(KirimEmail::class, function ($mail) use ($recipient, $message) {
             return $mail->messageContent === $message &&
                    $mail->user->id === $recipient->id &&
                    $mail->user->email === $recipient->email &&
