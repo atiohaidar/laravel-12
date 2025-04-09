@@ -67,6 +67,18 @@
                         <div class="col-md-4 text-secondary">Email</div>
                         <div class="col-md-8 fw-medium">{{ $user->email }}</div>
                     </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-secondary">Telegram ID</div>
+                        <div class="col-md-8 fw-medium">
+                            @if($user->telegram_id)
+                                {{ $user->telegram_id }}
+                            @else
+                                <span class="text-muted">Not set</span>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <div class="col-md-4 text-secondary">Registered</div>
                         <div class="col-md-8 fw-medium">{{ $user->created_at->format('F d, Y - h:i A') }}</div>

@@ -58,6 +58,17 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="telegram_id" class="form-label">Telegram ID</label>
+                            <input id="telegram_id" type="text" class="form-control @error('telegram_id') is-invalid @enderror" name="telegram_id" value="{{ old('telegram_id', $user->telegram_id) }}">
+                            <div class="form-text">Optional. Add your Telegram ID to receive login notifications via Telegram.</div>
+                            @error('telegram_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
                             <label for="password" class="form-label">Password (leave blank to keep current)</label>
                             <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password">
                             @error('password')

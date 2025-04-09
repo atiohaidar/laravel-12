@@ -97,6 +97,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id, // Ignore current user's email for unique validation
             'password' => 'nullable|string|min:8|confirmed', // Password is optional for update
+            'telegram_id' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -106,6 +107,7 @@ class UserController extends Controller
         $userData = [
             'name' => $request->name,
             'email' => $request->email,
+            'telegram_id' => $request->telegram_id,
         ];
 
         // Hanya update password jika ada password baru yang diisi

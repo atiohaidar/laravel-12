@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Telegram\TelegramMessage;
 use Carbon\Carbon;
 
 class LoginNotif extends Notification
@@ -29,7 +30,13 @@ class LoginNotif extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        $channels = ['mail'];
+        
+        if ($notifiable->telegram_id) {
+            $channels[] = 'telegram';
+        }
+        
+        return $channels;
     }
 
     /**
@@ -43,6 +50,17 @@ class LoginNotif extends Notification
                 'user' => $notifiable,
                 'loginTime' => $this->loginTime
             ]);
+    }
+
+    /**
+     * Get the Telegram representation of the notification.
+     */
+    public function toTelegram(object $notifiable)
+    {
+        return TelegramMessage::create()
+            ->to($notifiable->telegram_id)
+            ->content("🔔 *Login Notification*\n\nHello {$notifiable->name},\nYour account was logged in at {$this->loginTime}.\n\n_If this wasn't you, please contact support immediately._")
+            ->parseMode('Markdown');
     }
 
     /**
