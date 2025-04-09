@@ -4,12 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Auth\Factory; // ini make contract
+use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 
 class AuthController extends Controller
 {
+    protected $auth;
+    protected $hasher;
+    protected $validator;
+
+    public function __construct(Factory $auth, Hasher $hasher, ValidationFactory $validator)
+    {
+        $this->auth = $auth;
+        $this->hasher = $hasher;
+        $this->validator = $validator;
+    }
+    
     public function register()
     {
         return view('auth.register');
@@ -17,7 +28,7 @@ class AuthController extends Controller
 
     public function registerPost(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = $this->validator->make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
@@ -30,7 +41,7 @@ class AuthController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $this->hasher->make($request->password),
         ]);
 
         return redirect()->route('login')->with('success', 'Registrasi berhasil, silahkan login.');
@@ -43,7 +54,7 @@ class AuthController extends Controller
 
     public function loginPost(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = $this->validator->make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
@@ -54,7 +65,7 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
+        if ($this->auth->attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('/users'); // Redirect ke halaman user atau dashboard
         }
@@ -66,7 +77,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        $this->auth->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/login');
