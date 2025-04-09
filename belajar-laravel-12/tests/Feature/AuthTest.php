@@ -84,7 +84,7 @@ class AuthTest extends TestCase
         $response = $this->post('/login', $loginData);
 
         $response->assertSessionHasErrors(['email']); // Error email/password salah
-        // $response->assertGuest(); // Memastikan tidak ada user yang terautentikasi
+        $this->assertGuest(); // Memastikan tidak ada user yang terautentikasi
     }
 
     public function test_user_can_logout()
