@@ -129,4 +129,60 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
     }
+
+    /**
+     * Display the user's profile.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function profile()
+    {
+        return view('users.profile', ['user' => auth()->user()]);
+    }
+
+    /**
+     * Display the token management page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function tokens()
+    {
+        $tokens = auth()->user()->tokens;
+        return view('tokens.index', compact('tokens'));
+    }
+
+    /**
+     * Create a new token.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function createToken(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $token = auth()->user()->createToken($request->name);
+
+        return redirect()->route('tokens.index')
+            ->with('success', 'Token berhasil dibuat.')
+            ->with('plain_text_token', $token->plainTextToken);
+    }
+
+    /**
+     * Delete the specified token.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyToken($id)
+    {
+        auth()->user()->tokens()->where('id', $id)->delete();
+        return redirect()->route('tokens.index')->with('success', 'Token berhasil dihapus.');
+    }
 }

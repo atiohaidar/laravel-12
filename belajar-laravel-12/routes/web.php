@@ -26,7 +26,22 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Routes User Management (Perlu Middleware Auth)
+// Routes User Management & API (Perlu Middleware Auth)
 Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class); // CRUD lengkap untuk user
+    
+    // Dashboard routes
+    Route::get('/dashboard', function () {
+        return view('dashboard'); // Halaman dashboard
+    })->name('dashboard');
+    Route::get('/api-docs', function () {
+        return view('api.documentation');
+    })->name('api.docs');
+    
+    Route::get('/users/profile', [UserController::class, 'profile'])->name('users.profile');
+    
+    // Token management
+    Route::get('/tokens', [UserController::class, 'tokens'])->name('tokens.index');
+    Route::post('/tokens', [UserController::class, 'createToken'])->name('tokens.create');
+    Route::delete('/tokens/{token}', [UserController::class, 'destroyToken'])->name('tokens.destroy');
 });
