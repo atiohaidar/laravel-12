@@ -90,11 +90,11 @@ class TelegramNotificationTest extends TestCase
             ->put("/users/{$user->id}", [
                 'name' => $user->name,
                 'email' => $user->email,
-                'telegram_id' => '987654321'
+                'telegram_id' => '2043329651'
             ]);
 
         $response->assertRedirect();
-        $this->assertEquals('987654321', $user->fresh()->telegram_id);
+        $this->assertEquals('2043329651', $user->fresh()->telegram_id);
     }
 
     public function test_telegram_id_is_optional()
