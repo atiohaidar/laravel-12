@@ -1,41 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Tambah User Baru</title>
-</head>
-<body>
-    <h2>Tambah User Baru</h2>
+@extends('layouts.app')
 
-    @if ($errors->any())
-        <div>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+@section('title', 'Create User')
 
-    <form method="POST" action="{{ route('users.store') }}">
-        @csrf
-        <div>
-            <label for="name">Nama:</label>
-            <input type="text" id="name" name="name" value="{{ old('name') }}" required>
+@section('content')
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="d-flex align-items-center">
+                <a href="{{ url('/users') }}" class="btn btn-sm btn-outline-secondary me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back to Users
+                </a>
+                <h2 class="fw-bold mb-0">Create New User</h2>
+            </div>
         </div>
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="{{ old('email') }}" required>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    @if ($errors->any())
+                        <div class="alert alert-danger mb-4">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ url('/users') }}">
+                        @csrf
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autofocus>
+                            @error('name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
+                            @error('email')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required>
+                            @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                            <div class="form-text">Minimum 8 characters</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password-confirm" class="form-label">Confirm Password</label>
+                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary py-2">
+                                Create User
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div>
-            <label for="password_confirmation">Konfirmasi Password:</label>
-            <input type="password" id="password_confirmation" name="password_confirmation" required>
-        </div>
-        <button type="submit">Simpan</button>
-        <a href="{{ route('users.index') }}">Batal</a>
-    </form>
-</body>
-</html>
+    </div>
+</div>
+@endsection
