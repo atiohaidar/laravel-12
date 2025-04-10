@@ -12,7 +12,6 @@
 <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <!-- Custom styles -->
     <style>
@@ -146,6 +145,16 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ url('/dashboard') }}">Dashboard</a>
                     </li>
+                    @auth
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('chat') ? 'active' : '' }}" href="{{ url('/chat') }}">
+                            Chat
+                            @if(auth()->user()->unreadMessages()->count() > 0)
+                                <span class="badge rounded-pill bg-danger">{{ auth()->user()->unreadMessages()->count() }}</span>
+                            @endif
+                        </a>
+                    </li>
+                    @endauth
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('api-docs') ? 'active' : '' }}" href="{{ url('/api-docs') }}">API Docs</a>
                     </li>
@@ -196,7 +205,7 @@
     </footer>
 
     <!-- Bootstrap JS Bundle -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
 </body>
 </html>

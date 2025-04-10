@@ -11,7 +11,7 @@
 </div>
 
 <div class="row g-4 mb-5">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="dashboard-stat">
             <div class="d-flex align-items-center">
                 <div class="stat-icon me-3">
@@ -25,7 +25,7 @@
         </div>
     </div>
     
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="dashboard-stat">
             <div class="d-flex align-items-center">
                 <div class="stat-icon me-3">
@@ -39,7 +39,21 @@
         </div>
     </div>
     
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <div class="dashboard-stat">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="h5 mb-1">Messages</h3>
+                    <p class="text-secondary mb-0">{{ \App\Models\Message::count() }} total</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
         <div class="dashboard-stat">
             <div class="d-flex align-items-center">
                 <div class="stat-icon me-3">
@@ -94,9 +108,17 @@
     
     <div class="col-md-5 mb-4">
         <div class="card h-100">
-            <div class="card-header">API Quick Access</div>
+            <div class="card-header">Quick Access</div>
             <div class="card-body">
                 <div class="list-group">
+                    <a href="{{ url('/chat') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">Real-time Chat</h5>
+                            <small class="text-secondary">Chat with other users in real-time</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">{{ auth()->user()->unreadMessages()->count() }}</span>
+                    </a>
+                    
                     <a href="{{ url('/api-docs') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1">API Documentation</h5>

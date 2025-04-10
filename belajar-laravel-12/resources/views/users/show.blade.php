@@ -40,6 +40,14 @@
                     <p class="text-secondary mb-3">{{ $user->email }}</p>
                     
                     <div class="d-flex justify-content-center gap-2">
+                        @if($user->id !== auth()->id())
+                            <a href="{{ url('/chat') }}" class="btn btn-sm btn-primary" onclick="localStorage.setItem('openChatWith', '{{ $user->id }}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                Chat
+                            </a>
+                        @endif
                         <a href="{{ url('/users/' . $user->id . '/edit') }}" class="btn btn-sm btn-outline-primary">Edit</a>
                         <form action="{{ url('/users/' . $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
                             @csrf
@@ -196,3 +204,18 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // If the user clicked the chat button, we'll store the user ID
+    // in localStorage and redirect to the chat page.
+    // This will be used to automatically open a chat with this user.
+    document.addEventListener('DOMContentLoaded', function() {
+        // This script is for when the user arrives at the chat page
+        // after clicking the "Chat" button from this profile.
+        if (localStorage.getItem('openChatWith')) {
+            // We handle this in the chat page's JS
+        }
+    });
+</script>
+@endpush

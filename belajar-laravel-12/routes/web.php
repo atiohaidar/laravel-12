@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,6 +51,13 @@ Route::middleware(['auth'])->group(function () {
     
     // Route for sending telegram message
     Route::post('/users/{id}/send-telegram', [UserController::class, 'sendTelegram'])->name('users.send-telegram');
+    
+    // Chat routes
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/messages/{userId}', [ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('/chat/messages', [ChatController::class, 'store'])->name('chat.messages.store');
+    Route::post('/chat/messages/{id}/read', [ChatController::class, 'markAsRead'])->name('chat.messages.read');
+    Route::post('/chat/messages/{userId}/read-all', [ChatController::class, 'markAllAsRead'])->name('chat.messages.read-all');
 });
 Route::get('/print-job/{message}', function ($message)  {
 
