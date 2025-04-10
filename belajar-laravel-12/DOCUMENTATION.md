@@ -1,13 +1,16 @@
-# Laravel 12 API - Documentation
+# Laravel 12 API Documentation
 
-This documentation provides an overview of the Laravel 12 API project, its structure, features, and how to use it. This guide is intended for developers who are new to the project.
+> **Note**: The documentation has been moved to the `/docs` folder for better organization.
 
-## Table of Contents
+## Available Documentation
 
-1. [Project Overview](#project-overview)
-2. [Prerequisites](#prerequisites)
-3. [Getting Started](#getting-started)
-4. [API Structure](#api-structure)
+- [Installation Guide](/docs/installation.md) - Setup and installation instructions
+- [API Documentation](/docs/api.md) - Complete API endpoints reference
+- [Development Guide](/docs/development.md) - Development workflow and best practices
+- [Testing Guide](/docs/testing.md) - Testing procedures and examples
+- [Troubleshooting](/docs/troubleshooting.md) - Common issues and solutions
+
+Please visit the [documentation index](/docs/README.md) for the complete documentation.
 5. [Authentication](#authentication)
 6. [User Management](#user-management)
 7. [Testing](#testing)
