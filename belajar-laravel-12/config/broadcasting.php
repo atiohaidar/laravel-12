@@ -66,6 +66,26 @@ return [
             'driver' => 'null',
         ],
 
+        'reverb' => [
+            'driver' => 'reverb',
+            'app_id' => env('REVERB_APP_ID', null),
+            'key' => env('REVERB_APP_KEY', env('PUSHER_APP_KEY')),
+            'secret' => env('REVERB_APP_SECRET', env('PUSHER_APP_SECRET')),
+            'app_host' => env('REVERB_HOST', 'reverb.laravel.com'),
+            'app_port' => env('REVERB_PORT', 443),
+            'app_scheme' => env('REVERB_SCHEME', 'https'),
+            'options' => [
+                'cluster' => env('REVERB_APP_CLUSTER', 'mt1'),
+                'encrypted' => env('REVERB_APP_ENCRYPTED', true),
+                'host' => env('REVERB_HOST', '127.0.0.1'),
+                'port' => env('REVERB_PORT', 8080),
+                'scheme' => env('REVERB_SCHEME', 'http'),
+                'curl_options' => [
+                    CURLOPT_SSL_VERIFYHOST => 0,
+                    CURLOPT_SSL_VERIFYPEER => 0,
+                ],
+            ],
+        ],
     ],
 
 ];

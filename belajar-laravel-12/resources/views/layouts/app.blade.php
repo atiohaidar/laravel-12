@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
+    @vite(['resources/css/bootstrap-app.css', 'resources/js/app.js'])
     
     <!-- Custom styles -->
     <style>
@@ -146,6 +147,39 @@
                         <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ url('/dashboard') }}">Dashboard</a>
                     </li>
                     @auth
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->is('wallet*') ? 'active' : '' }}" href="#" id="walletDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Wallet
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="walletDropdown">
+                            <li><a class="dropdown-item" href="{{ route('wallet.index') }}">My Wallet</a></li>
+                            <li><a class="dropdown-item" href="{{ route('wallet.topup.form') }}">Top Up</a></li>
+                            <li><a class="dropdown-item" href="{{ route('wallet.transfer.form') }}">Transfer</a></li>
+                            <li><a class="dropdown-item" href="{{ route('wallet.transactions') }}">Transaction History</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->is('products*') ? 'active' : '' }}" href="#" id="inventoryDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Inventory
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="inventoryDropdown">
+                            <li><a class="dropdown-item" href="{{ route('products.index') }}">My Products</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products.create') }}">Add New Product</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->is('marketplace*') ? 'active' : '' }}" href="#" id="marketplaceDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Marketplace
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="marketplaceDropdown">
+                            <li><a class="dropdown-item" href="{{ route('marketplace.index') }}">Browse Products</a></li>
+                            <li><a class="dropdown-item" href="{{ route('marketplace.purchased') }}">My Purchases</a></li>
+                            <li><a class="dropdown-item" href="{{ route('marketplace.sold') }}">My Sales</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('chat') ? 'active' : '' }}" href="{{ url('/chat') }}">
                             Chat
@@ -153,6 +187,20 @@
                                 <span class="badge rounded-pill bg-danger">{{ auth()->user()->unreadMessages()->count() }}</span>
                             @endif
                         </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->is('events*') || request()->is('event-categories*') ? 'active' : '' }}" href="#" id="eventsDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Events
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="eventsDropdown">
+                            <li><a class="dropdown-item" href="{{ route('events.index') }}">Browse Events</a></li>
+                            <li><a class="dropdown-item" href="{{ route('events.create') }}">Create Event</a></li>
+                            <li><a class="dropdown-item" href="{{ route('events.organized') }}">My Events</a></li>
+                            <li><a class="dropdown-item" href="{{ route('events.registrations.my') }}">My Registrations</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('event-categories.index') }}">Event Categories</a></li>
+                        </ul>
                     </li>
                     @endauth
                     <li class="nav-item">
@@ -203,7 +251,8 @@
             <span class="text-muted">Laravel 12 API &copy; {{ date('Y') }}</span>
         </div>
     </footer>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')

@@ -21,6 +21,17 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('users', UserController::class); // API Resource routes untuk user management
+    
+    // Event API routes
+    Route::apiResource('events', \App\Http\Controllers\Api\EventController::class);
+    Route::apiResource('event-categories', \App\Http\Controllers\Api\EventCategoryController::class);
+    
+    // Event registration API routes
+    Route::post('/events/{event}/register', [\App\Http\Controllers\Api\EventRegistrationController::class, 'register']);
+    Route::get('/events/registrations/my', [\App\Http\Controllers\Api\EventController::class, 'myRegistrations']);
+    Route::put('/events/registrations/{registration}/cancel', [\App\Http\Controllers\Api\EventRegistrationController::class, 'cancel']);
+    Route::put('/events/registrations/{registration}/check-in', [\App\Http\Controllers\Api\EventRegistrationController::class, 'checkIn']);
+    Route::get('/events/{event}/attendees', [\App\Http\Controllers\Api\EventController::class, 'attendees']);
 });
 
 Route::get('/user', function () {

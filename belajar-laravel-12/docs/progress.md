@@ -112,3 +112,10 @@ This document outlines the plan for implementing a real-time chat feature in our
 
 ## Conclusion
 This implementation plan provides a roadmap for adding real-time chat functionality to our Laravel 12 application using Pusher Channels. The feature will enhance user engagement by allowing instant communication between users.
+
+# Learning Lesson
+Masalah: error 
+    @vite(['resources/css/bootstrap-app.css', 'resources/js/app.js'])
+ engga kebaca di app.blade.php (template)
+ Solusi:
+ Samain dengan yang ada di vite.config.js

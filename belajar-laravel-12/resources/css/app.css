@@ -9,3 +9,53 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Base styles */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1e293b;
+    background-color: #f9fafb;
+    line-height: 1.6;
+}
+
+/* Chat application specific styles */
+.message {
+    max-width: 75%;
+    word-wrap: break-word;
+}
+
+.message-sent {
+    border-radius: 15px 15px 0 15px;
+}
+
+.message-received {
+    border-radius: 15px 15px 15px 0;
+}
+
+.user-item.active {
+    background-color: rgba(13, 110, 253, 0.1);
+    border-color: rgba(13, 110, 253, 0.2);
+}
+
+#messages-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Custom scrollbar */
+#messages-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+#messages-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#messages-container::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+#messages-container::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+}

@@ -3,6 +3,12 @@
 @section('title', 'Dashboard')
 
 @section('content')
+<div class="parallax" style="background-image: url('/path/to/your/image.jpg');">
+    <div class="parallax-content">
+        <h1 class="text-white">Welcome to the Dashboard</h1>
+    </div>
+</div>
+
 <div class="row mb-4">
     <div class="col-md-12">
         <h2 class="fw-bold">Dashboard</h2>
@@ -97,7 +103,6 @@
                                         View
                                     </a>
                                 </td>
-                            </tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -145,4 +150,28 @@
         </div>
     </div>
 </div>
+
+<style>
+    .parallax {
+        position: relative;
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .parallax-content {
+        text-align: center;
+    }
+
+    .parallax h1 {
+        font-size: 3rem;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+</style>
 @endsection

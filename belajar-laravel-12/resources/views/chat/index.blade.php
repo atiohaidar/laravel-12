@@ -123,6 +123,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Set up variables
+
         const userId = {{ auth()->id() }};
         const userName = "{{ auth()->user()->name }}";
         let currentRecipientId = null;
@@ -130,7 +131,6 @@
         let typingTimer;
         let isTyping = false;
         let usePolling = false;
-        
         // DOM elements
         const messageInput = document.getElementById('message-input');
         const messageForm = document.getElementById('message-form');
@@ -156,15 +156,30 @@
             }
         }
         
-        // Check if Echo is available
+        // Define setup polling function
+        function setupPolling() {
+            usePolling = true;
+            connectionError.classList.remove('d-none');
+            
+            // Set up polling for new messages every 5 seconds
+            setInterval(() => {
+                if (currentRecipientId) {
+                    loadMessages(currentRecipientId);
+                }
+            }, 5000);
+        }
+        
+        // Check if Echo is available and properly configured
         if (typeof window.Echo !== 'undefined') {
+            console.info(window.Echo);
+
             try {
                 // Setup Echo for real-time communication
                 window.Echo.join('presence.chat')
-                    .here((users) => {
+                .here((users) => {
                         // Update online users count
                         document.getElementById('online-users-count').textContent = `${users.length} online`;
-                        
+
                         // Mark users as online
                         users.forEach(user => {
                             const statusIndicator = document.querySelector(`.user-status[data-user-id="${user.id}"]`);
@@ -184,7 +199,7 @@
                         
                         // Update online count
                         const onlineCount = document.getElementById('online-users-count');
-                        const currentCount = parseInt(onlineCount.textContent);
+                        const currentCount = parseInt(onlineCount.textContent.split(' ')[0]) || 0;
                         onlineCount.textContent = `${currentCount + 1} online`;
                     })
                     .leaving((user) => {
@@ -197,12 +212,11 @@
                         
                         // Update online count
                         const onlineCount = document.getElementById('online-users-count');
-                        const currentCount = parseInt(onlineCount.textContent);
-                        onlineCount.textContent = `${currentCount - 1} online`;
+                        const currentCount = parseInt(onlineCount.textContent.split(' ')[0]) || 0;
+                        onlineCount.textContent = `${Math.max(0, currentCount - 1)} online`;
                     });
-
-                // Listen for private messages
-                window.Echo.private(`chat.${userId}`)
+                    // Listen for private messages
+                    window.Echo.private(`chat.${userId}`)
                     .listen('NewChatMessage', (e) => {
                         // Add message to the conversation if it's the current one
                         if (currentRecipientId === e.message.user_id) {
@@ -216,7 +230,9 @@
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                 }
                             });
+
                         } else {
+
                             // Update unread count
                             const unreadCountBadge = document.querySelector(`.unread-count[data-user-id="${e.message.user_id}"]`);
                             if (unreadCountBadge) {
@@ -231,6 +247,7 @@
                                 lastMessage.textContent = e.message.body;
                             }
                         }
+
                     })
                     .listenForWhisper('typing', (e) => {
                         // Show typing indicator if the current conversation
@@ -244,6 +261,8 @@
                             }, 3000);
                         }
                     });
+                
+                console.log("Echo connection established successfully");
             } catch (error) {
                 console.error('Echo initialization error:', error);
                 setupPolling();
@@ -251,18 +270,6 @@
         } else {
             console.warn('Echo is not defined. Falling back to polling.');
             setupPolling();
-        }
-        
-        function setupPolling() {
-            usePolling = true;
-            connectionError.classList.remove('d-none');
-            
-            // Set up polling for new messages every 5 seconds
-            setInterval(() => {
-                if (currentRecipientId) {
-                    loadMessages(currentRecipientId);
-                }
-            }, 5000);
         }
 
         // Handle selecting a user to chat with
@@ -279,8 +286,10 @@
             
             // Reset unread counter
             const unreadCountBadge = userItem.querySelector('.unread-count');
-            unreadCountBadge.textContent = '0';
-            unreadCountBadge.style.display = 'none';
+            if (unreadCountBadge) {
+                unreadCountBadge.textContent = '0';
+                unreadCountBadge.style.display = 'none';
+            }
             
             // Update UI
             welcomeScreen.style.display = 'none';
@@ -328,7 +337,9 @@
                 
                 // Update last message in the conversation list
                 const lastMessage = document.querySelector(`.last-message[data-user-id="${currentRecipientId}"]`);
-                lastMessage.textContent = message;
+                if (lastMessage) {
+                    lastMessage.textContent = message;
+                }
                 
                 // Scroll to bottom
                 scrollToBottom();
@@ -340,29 +351,38 @@
 
         // Handle typing indicator
         messageInput.addEventListener('input', function() {
-            if (!isTyping && currentRecipientId) {
+
+            if (!isTyping && currentRecipientId && !usePolling && typeof window.Echo !== 'undefined') {
                 isTyping = true;
                 
-                // Broadcast typing event
-                window.Echo.private(`chat.${currentRecipientId}`)
-                    .whisper('typing', {
-                        user: { id: userId, name: userName }
-                    });
+                try {
+
+                    // Broadcast typing event
+                    window.Echo.private(`chat.${currentRecipientId}`)
+                        .whisper('typing', {
+                            user: { id: userId, name: userName }
+                        });
+                } catch (error) {
+                    console.error('Error sending typing indicator:', error);
+                }
                 
                 // Reset typing status after 2 seconds
                 setTimeout(() => {
                     isTyping = false;
                 }, 2000);
             }
-        });
+
+        }
+
+    );
 
         // Function to load messages
         function loadMessages(recipientId) {
             messagesContainer.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
             
             fetch(`/chat/messages/${recipientId}`)
-                .then(response => response.json())
-                .then(data => {
+            .then(response => response.json())
+            .then(data => {
                     messagesContainer.innerHTML = '';
                     
                     if (data.messages.length === 0) {
@@ -373,6 +393,7 @@
                             appendMessage(message.body, message.created_at, isSender);
                         });
                     }
+
                     
                     // Mark unread messages as read
                     if (data.unread_count > 0) {
