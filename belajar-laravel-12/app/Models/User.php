@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // Tambahkan baris ini
+use Laravel\Sanctum\HasApiTokens;
+use Modules\Forms\app\Models\Form;
 
 class User extends Authenticatable
 {
@@ -153,5 +154,13 @@ class User extends Authenticatable
                       ->where('start_time', '>', now());
             })
             ->whereNotIn('status', ['cancelled', 'refunded']);
+    }
+
+    /**
+     * Get the forms created by the user.
+     */
+    public function forms(): HasMany
+    {
+        return $this->hasMany(Form::class);
     }
 }

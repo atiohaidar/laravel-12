@@ -1,0 +1,1 @@
+make ini work https://github.com/nWidart/laravel-modules/issues/283
