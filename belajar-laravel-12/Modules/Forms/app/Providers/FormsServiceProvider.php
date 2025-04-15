@@ -4,7 +4,7 @@ namespace Modules\Forms\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-
+use Modules\Forms\app\Console\PublishFormsModuleCommand;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -28,6 +28,9 @@ class FormsServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+        
+        // Register additional publishable assets
+        $this->registerPublishableResources();
     }
 
     /**
@@ -44,7 +47,9 @@ class FormsServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
+        $this->commands([
+            PublishFormsModuleCommand::class,
+        ]);
     }
 
     /**
@@ -132,5 +137,31 @@ class FormsServiceProvider extends ServiceProvider
         }
 
         return $paths;
+    }
+
+    /**
+     * Register publishable resources.
+     */
+    protected function registerPublishableResources(): void
+    {
+        // Publish migrations
+        $this->publishes([
+            module_path($this->name, 'database/migrations') => database_path('migrations'),
+        ], $this->nameLower.'-migrations');
+
+        // Publish public assets (CSS, JS)
+        $sourcePath = module_path($this->name, 'resources/assets');
+        $targetPath = public_path('modules/'.$this->nameLower);
+        
+        if (is_dir($sourcePath)) {
+            $this->publishes([
+                $sourcePath => $targetPath,
+            ], [$this->nameLower.'-assets', 'laravel-assets']);
+        }
+
+        // Publish config separately to ensure correct naming
+        $this->publishes([
+            module_path($this->name, 'Config/config.php') => config_path($this->nameLower.'.php'),
+        ], $this->nameLower.'-config');
     }
 }

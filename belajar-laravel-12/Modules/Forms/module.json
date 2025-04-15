@@ -1,8 +1,8 @@
 {
     "name": "Forms",
     "alias": "forms",
-    "description": "",
-    "keywords": [],
+    "description": "A form builder and response collector module for Laravel applications",
+    "keywords": ["laravel", "forms", "survey", "questionnaire"],
     "priority": 0,
     "providers": [
         "Modules\\Forms\\Providers\\FormsServiceProvider"
